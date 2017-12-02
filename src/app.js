@@ -10,13 +10,17 @@ var nav = [{
     Link: '/Authors',
     Text: 'Author'
 }];
-var bookRouter = require('./routes/bookRoutes')(nav);
+
+// You can use router submodules to split your controller routing and handlers
+let bookRouter = require('./routes/bookRoutes')(nav);
+let adminRouter = require('./routes/adminRoutes')(nav);
 
 app.use(express.static('public'));
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
-app.use('/Books', bookRouter);
+app.use('/books', bookRouter);
+app.use('/admin', adminRouter);
 
 app.get('/', function (req, res) {
     res.render('index', {

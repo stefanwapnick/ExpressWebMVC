@@ -1,12 +1,9 @@
 let express = require('express');
+let adminRouter = express.Router();
 let mongoClient = require('mongodb').MongoClient;
-let ObjectID = require('mongodb').ObjectID;
-let bookRouter = express.Router();
-let connectionString = require('./constants').DB_CONNECTION_STRING;
+const connectionString = require('./constants').DB_CONNECTION_STRING;
 
-// Example of how to pass in arguments to router functions
-var router = function(nav){
-    var books = [
+let books = [
     {
         title: 'War and Peace',
         genre: 'Historical Fiction',
@@ -55,38 +52,22 @@ var router = function(nav){
         author: 'Lev Nikolayevich Tolstoy',
         read: false
     }
-    ];
-    bookRouter.route('/')
-    .get(function (req, res) {
+];
+
+let factoryFunction = function(nav){
+    adminRouter.route('/addBooks').get(function(req, res){
 
         mongoClient.connect(connectionString, function(err, db){
-
-            db.collection('books').find().toArray(function(err, results){
-                res.render('bookListView', {
-                    title: 'Books',
-                    nav: nav,
-                    books: results
-                });
+            db.collection('books').insertMany(books, function(err, results){
+                res.send(err || results);
+                db.close();
             });
         });
 
+        //res.send('results');
     });
 
-    bookRouter.route('/:id')
-    .get(function (req, res) {
-        let id = new ObjectID(req.params.id);
-
-        mongoClient.connect(connectionString, function(err, db){
-            db.collection('books').findOne({_id: id}, function(err, result){
-                res.render('bookView', {
-                    title: 'Books',
-                    nav: nav,
-                    book: result
-                });
-            });
-        });
-
-    });
-    return bookRouter;
+    return adminRouter;
 };
-module.exports = router;
+
+module.exports = factoryFunction;

@@ -50,10 +50,9 @@
     "supernew": false,
     "validthis": false,
     "noyield": false,
-
     "browser": true,
     "node": true,
-
+    "esversion": 6,
     "globals": {
         "angular": false
     }
