@@ -8,12 +8,10 @@ let factoryFunction = function(){
 
         mongoClient.connect(connectionString, function(err, db){
             db.collection('books').remove({}, function(err, results){
-                res.redirect('/books')
+                res.redirect('/books');
                 db.close();
             });
         });
-
-        //res.send('results');
     });
 
     return adminRouter;
