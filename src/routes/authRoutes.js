@@ -18,6 +18,7 @@ var router = function () {
                     function (err, results) {
                         req.login(results.ops[0], function () {
                             res.redirect('/auth/profile');
+                            db.close();
                         });
                     });
             });

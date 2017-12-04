@@ -28,6 +28,7 @@ app.set('view engine', 'ejs');
 
 app.use('/books', bookRouter);
 app.use('/auth', authRouter);
+app.use('/admin',adminRouter);
 
 app.engine('ejs', ejsMateEngine);
 

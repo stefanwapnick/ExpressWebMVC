@@ -21,12 +21,36 @@ let router = function(){
             mongoClient.connect(connectionString, function (err, db) {
 
                 db.collection('books').find().toArray(function (err, results) {
-                    res.render('bookListView', {
-                        title: 'Books',
-                        books: results
-                    });
+                    res.render('bookListView', {books: results});
+                    db.close();
                 });
             });
+        });
+
+    bookRouter.route('/new')
+        .get(function(req, res){
+            res.render('bookView', {book: {title: '', author: '', genre: '', read: false}});
+        })
+        .post(function(req, res){
+
+            let book = {
+                title: req.body.title,
+                genre: req.body.title,
+                author: req.body.title,
+                read: req.body.read
+            };
+
+            var url = 'mongodb://localhost:27017/libraryApp';
+            mongoClient.connect(url, function (err, db) {
+                db.collection('books').insert(book,
+                    function (err, results) {
+                        req.login(results.ops[0], function () {
+                            res.redirect('/books');
+                            db.close();
+                        });
+                    });
+            });
+
         });
 
     bookRouter.route('/:id')
@@ -35,13 +59,11 @@ let router = function(){
 
         mongoClient.connect(connectionString, function(err, db){
             db.collection('books').findOne({_id: id}, function(err, result){
-                res.render('bookView', {
-                    title: 'Books',
-                    book: result
-                });
+                console.log(result);
+                res.render('bookView', {book: result});
+                db.close();
             });
         });
-
     })
     .post(function(req, res){
         let id = new ObjectID(req.params.id);
@@ -53,11 +75,17 @@ let router = function(){
                     return;
                 }
 
-                let book = req.body;
-                book._id = id;
+                let book = {
+                    title: req.body.title,
+                    author: req.body.author,
+                    genre: req.body.genre,
+                    read: req.body.read,
+                    _id: id
+                };
 
-                db.collections('books').updateOne({_id: id}, book, function(err, result){
+                db.collection('books').updateOne({_id: id}, book, function(err, result){
                     res.redirect('/books');
+                    db.close();
                 });
 
             });
