@@ -1,12 +1,13 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var session = require('express-session');
+let express = require('express');
+let bodyParser = require('body-parser');
+let cookieParser = require('cookie-parser');
+let session = require('express-session');
+let ejsMateEngine = require('ejs-mate');
 
-var app = express();
+let app = express();
 
-var port = process.env.PORT || 3000;
-var nav = [{
+let port = process.env.PORT || 3000;
+let nav = [{
     Link: '/Books',
     Text: 'Book'
 }, {
@@ -17,7 +18,7 @@ var nav = [{
 // You can use router submodules to split your controller routing and handlers
 let bookRouter = require('./routes/bookRoutes')(nav);
 let adminRouter = require('./routes/adminRoutes')(nav);
-var authRouter = require('./routes/authRoutes')(nav);
+let authRouter = require('./routes/authRoutes')(nav);
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
@@ -35,6 +36,8 @@ app.set('view engine', 'ejs');
 app.use('/books', bookRouter);
 app.use('/admin', adminRouter);
 app.use('/auth', authRouter);
+
+app.engine('ejs', ejsMateEngine);
 
 app.get('/', function (req, res) {
     res.render('index', {
