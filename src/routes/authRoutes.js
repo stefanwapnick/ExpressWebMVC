@@ -7,22 +7,14 @@ var router = function () {
     authRouter.route('/signUp')
         .post(function (req, res) {
             console.log(req.body);
-            var url =
-                'mongodb://localhost:27017/libraryApp';
+            var url = 'mongodb://localhost:27017/libraryApp';
             mongodb.connect(url, function (err, db) {
-
-                if(err){
-                    res.send(err);
-                    return;
-                }
-
-                var collection = db.collection('users');
                 var user = {
-                    username: req.body.userName,
+                    username: req.body.username,
                     password: req.body.password
                 };
 
-                collection.insert(user,
+                db.collection('users').insert(user,
                     function (err, results) {
                         req.login(results.ops[0], function () {
                             res.redirect('/auth/profile');
@@ -32,9 +24,7 @@ var router = function () {
 
         });
     authRouter.route('/signIn')
-        .post(passport.authenticate('local', {
-            failureRedirect: '/'
-        }), function (req, res) {
+        .post(passport.authenticate('local', {failureRedirect: '/'}), function (req, res) {
             res.redirect('/auth/profile');
         });
     authRouter.route('/profile')
@@ -45,7 +35,7 @@ var router = function () {
             next();
         })
         .get(function (req, res) {
-            res.json(req.user);
+            res.render('profile', {user: req.user});
         });
     return authRouter;
 };

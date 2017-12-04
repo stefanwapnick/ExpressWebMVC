@@ -7,18 +7,11 @@ let ejsMateEngine = require('ejs-mate');
 let app = express();
 
 let port = process.env.PORT || 3000;
-let nav = [{
-    Link: '/Books',
-    Text: 'Book'
-}, {
-    Link: '/Authors',
-    Text: 'Author'
-}];
 
 // You can use router submodules to split your controller routing and handlers
-let bookRouter = require('./routes/bookRoutes')(nav);
-let adminRouter = require('./routes/adminRoutes')(nav);
-let authRouter = require('./routes/authRoutes')(nav);
+let bookRouter = require('./routes/bookRoutes')();
+let adminRouter = require('./routes/adminRoutes')();
+let authRouter = require('./routes/authRoutes')();
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
@@ -34,22 +27,12 @@ app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
 app.use('/books', bookRouter);
-app.use('/admin', adminRouter);
 app.use('/auth', authRouter);
 
 app.engine('ejs', ejsMateEngine);
 
 app.get('/', function (req, res) {
-    res.render('index', {
-        title: 'Hello from render',
-        nav: [{
-            Link: '/Books',
-            Text: 'Books'
-        }, {
-            Link: '/Authors',
-            Text: 'Authors'
-        }]
-    });
+    res.render('home');
 });
 
 app.get('/books', function (req, res) {
