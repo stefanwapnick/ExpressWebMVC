@@ -20,7 +20,7 @@ app.use(cookieParser());
 // Used for secret key when encrypting session cookies
 app.use(session({secret: 'library'}));
 
-// Configure password
+// Configure passport
 require('./config/passport')(app);
 
 app.set('views', './src/views');
